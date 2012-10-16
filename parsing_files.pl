@@ -65,11 +65,30 @@ transf2([A|G], N, [v(p(L,C,Z), A)|R]) :-
 % transf2([C|CS], [G|GS], [v(G, C)|D], TS) :-
 %       transf2(CS, GS, D, TS).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% prettyprint prints to the output in an elegant way %%
 
-test(A) :-
+prettyprint(_, []). % End of the print
+prettyprint(F, [v(p(_, 9, _), V)|N]) :- write(F, V), nl(F), prettyprint(F, N).
+prettyprint(F, [v(_, V)|N]):- write(F, V), write(F, ' '), prettyprint(F, N).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+test(0, _).
+test(N, [Nam|FR]) :-
         %trace,
-        read_lines(L),
+        number_codes(N, Codes),
+        append("grilles/", Codes, Name_),
+        append(Name_, ".txt", Na),
+        string_to_list(Nam, Na),
+        open(Nam, read, F),
+        read_lines(L, F),
+        close(F),
         !,
-        transf2(L, A), !.
+        transf2(L, A), !,
+        N2 is N-1,
+        test(N2, FR)
+.
+
 % @TODO: find a way to get the line as an ASCII list (with read() ? read_lines_to_codes() ? ) and then use super_i()
 % @TODO: Then, use the same way remplis() does to generate a grid (zone(X, Y, X), v(p(X, Y, Z), Value))
